@@ -90,11 +90,8 @@ describe('DomainException', () => {
     });
 
     it('should be catchable as a domain exception', () => {
-      try {
-        throw new TestDomainException('Test error');
-      } catch (error) {
-        expect(error).toBeInstanceOf(DomainException);
-      }
+      const error = new TestDomainException('Test error');
+      expect(error).toBeInstanceOf(DomainException);
     });
 
     it('should be catchable as a specific implementation', () => {

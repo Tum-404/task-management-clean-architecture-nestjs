@@ -1,10 +1,12 @@
 import { TaskId } from '@core/domain/value-objects/task-id.vo';
+import { UserId } from '@core/domain/value-objects/user-id.vo';
 
 export interface TaskProps {
   id?: TaskId;
   title: string;
   description?: string;
   completed: boolean;
+  userId: UserId;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -44,6 +46,10 @@ export class Task {
 
   get createdAt(): Date {
     return this.props.createdAt!;
+  }
+
+  get userId(): UserId {
+    return this.props.userId;
   }
 
   get updatedAt(): Date {

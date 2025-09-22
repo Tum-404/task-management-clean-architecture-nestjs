@@ -11,6 +11,7 @@ export class CreateTaskUseCase implements UseCase<CreateTaskDto, Task> {
       title: dto.title,
       description: dto.description,
       completed: false,
+      userId: dto.userId,
     });
 
     return this.TaskRepository.save(task);

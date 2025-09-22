@@ -61,19 +61,16 @@ describe('SignInUserUseCase', () => {
       const findUserByEmailArg =
         mockUserRepository.findByEmail.mock.calls[0][0];
 
-      expect(findUserByEmailArg).toHaveBeenCalledWith(
+      expect(findUserByEmailArg).toEqual(
         expect.objectContaining({ value: validDto.email }),
       );
 
       const compareArg1 = mockCryptoRepository.compare.mock.calls[0][0];
-      expect(compareArg1).toHaveBeenCalledWith(
-        validDto.password,
-        mockUser.password,
-      );
+      expect(compareArg1).toEqual(validDto.password, mockUser.password);
 
       const generateAccessTokenArg =
         mockAuthService.generateAccessToken.mock.calls[0][0];
-      expect(generateAccessTokenArg).toHaveBeenCalledWith(mockUser);
+      expect(generateAccessTokenArg).toEqual(mockUser);
       expect(result).toEqual({ accessToken: 'jwt.token.here' });
     });
 
@@ -111,13 +108,13 @@ describe('SignInUserUseCase', () => {
     it('should not store sensitive data in error messages', async () => {
       mockUserRepository.findByEmail.mockResolvedValueOnce(null);
 
-      try {
+      const action = async () => {
         await useCase.execute(validDto);
-        fail('Should have thrown an error');
-      } catch (error) {
-        expect(error.message).not.toContain(validDto.email);
-        expect(error.message).not.toContain(validDto.password);
-      }
+      };
+
+      await expect(action()).rejects.toThrow();
+      await expect(action()).rejects.not.toThrow(new RegExp(validDto.email));
+      await expect(action()).rejects.not.toThrow(new RegExp(validDto.password));
     });
   });
 });

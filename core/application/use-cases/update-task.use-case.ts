@@ -4,6 +4,7 @@ import { Task } from '@core/domain/entities/task.entity';
 import { TaskRepositoryPort } from '@core/application/ports/task-repository.port';
 import { TaskId } from '@core/domain/value-objects/task-id.vo';
 import { TaskNotFoundException } from '@core/shared/exceptions/task-notfound.exception';
+import { AccessDeniedException } from '@core/shared/exceptions/accessdenied.exception';
 
 export class UpdateTaskUseCase implements UseCase<UpdateTaskDto, Task> {
   constructor(private readonly TaskRepository: TaskRepositoryPort) {}
@@ -14,6 +15,11 @@ export class UpdateTaskUseCase implements UseCase<UpdateTaskDto, Task> {
 
     if (!existingTask) {
       throw new TaskNotFoundException(taskId);
+    }
+
+    const isOwner = await this.TaskRepository.isOwner(taskId, dto.userId);
+    if (!isOwner) {
+      throw new AccessDeniedException();
     }
 
     if (dto.title !== undefined) {

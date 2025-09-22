@@ -1,13 +1,21 @@
 import { Task, TaskProps } from './task.entity';
 import { TaskId } from '@core/domain/value-objects/task-id.vo';
+import { UserId } from '@core/domain/value-objects/user-id.vo';
 
 describe('Task Entity', () => {
+  let mockUserId: UserId;
+
+  beforeEach(() => {
+    mockUserId = new UserId('123e4567-e89b-12d3-a456-426614174000');
+  });
+
   describe('create', () => {
     it('should create a new task with generated id and timestamps', () => {
       const props = {
         title: 'Test Task',
         description: 'Test Description',
         completed: false,
+        userId: mockUserId,
       };
 
       const task = Task.create(props);
@@ -25,6 +33,7 @@ describe('Task Entity', () => {
       const props = {
         title: 'Test Task',
         completed: false,
+        userId: mockUserId,
       };
 
       const task = Task.create(props);
@@ -36,16 +45,15 @@ describe('Task Entity', () => {
   });
 
   describe('fromPersistence', () => {
-    it('should create a task from persistence data', () => {
-      const now = new Date();
-      const id = new TaskId();
+    it('should create a task from persistence props', () => {
       const props: TaskProps = {
-        id,
+        id: new TaskId('123e4567-e89b-12d3-a456-426614174000'),
         title: 'Test Task',
         description: 'Test Description',
         completed: true,
-        createdAt: now,
-        updatedAt: now,
+        userId: mockUserId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       };
 
       const task = Task.fromPersistence(props);
@@ -63,6 +71,7 @@ describe('Task Entity', () => {
         title: 'Test Task',
         description: 'Test Description',
         completed: false,
+        userId: mockUserId,
       };
 
       const task = Task.fromPersistence(props);
@@ -71,6 +80,41 @@ describe('Task Entity', () => {
       expect(task.id).toBeInstanceOf(TaskId);
       expect(task.createdAt).toBeInstanceOf(Date);
       expect(task.updatedAt).toBeInstanceOf(Date);
+    });
+
+    it('should handle partial persistence data with only required fields', () => {
+      const props: TaskProps = {
+        title: 'Test Task',
+        userId: mockUserId,
+        completed: true,
+      };
+
+      const task = Task.fromPersistence(props);
+
+      expect(task.id).toBeDefined();
+      expect(task.title).toBe(props.title);
+      expect(task.completed).toBe(props.completed);
+      expect(task.description).toBeUndefined();
+      expect(task.createdAt).toBeDefined();
+      expect(task.updatedAt).toBeDefined();
+    });
+
+    it('should preserve createdAt when updating updatedAt from persistence', () => {
+      const createdAt = new Date(2023, 0, 1);
+      const updatedAt = new Date(2023, 0, 2);
+
+      const props: TaskProps = {
+        title: 'Test Task',
+        completed: false,
+        userId: mockUserId,
+        createdAt,
+        updatedAt,
+      };
+
+      const task = Task.fromPersistence(props);
+
+      expect(task.createdAt).toEqual(createdAt);
+      expect(task.updatedAt).toEqual(updatedAt);
     });
   });
 
@@ -82,6 +126,7 @@ describe('Task Entity', () => {
       props = {
         title: 'Test Task',
         description: 'Test Description',
+        userId: mockUserId,
         completed: false,
       };
       task = Task.create(props);
@@ -118,6 +163,7 @@ describe('Task Entity', () => {
       const task = Task.create({
         title: 'Test Task',
         completed: false,
+        userId: mockUserId,
       });
 
       expect(task.description).toBeUndefined();
@@ -128,6 +174,7 @@ describe('Task Entity', () => {
         title: 'Test Task',
         description: '',
         completed: false,
+        userId: mockUserId,
       });
 
       expect(task.description).toBe('');
