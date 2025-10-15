@@ -1,9 +1,9 @@
 import { UseCase } from '../../shared/interfaces/use-case.interface';
 import { TaskRepositoryPort } from '../ports/task-repository.port';
 import { TaskNotFoundException } from '@core/shared/exceptions/task-notfound.exception';
-import { UnauthorizedException } from '@core/shared/exceptions/accessdenied.exception';
 import { TaskId } from '@core/domain/value-objects/task-id.vo';
 import { UserId } from '@core/domain/value-objects/user-id.vo';
+import { AccessDeniedException } from '@core/shared/exceptions/accessdenied.exception';
 
 export interface DeleteTaskUseCaseInput {
   id: string;
@@ -25,7 +25,7 @@ export class DeleteTaskUseCase
 
     const isOwner = await this.TaskRepository.isOwner(taskId, input.userId);
     if (!isOwner) {
-      throw new UnauthorizedException();
+      throw new AccessDeniedException();
     }
 
     await this.TaskRepository.delete(taskId);

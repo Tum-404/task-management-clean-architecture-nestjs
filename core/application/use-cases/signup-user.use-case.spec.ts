@@ -1,10 +1,10 @@
-import { User } from '@core/domain/entit      mockUserRepository.save.mockClear();/user.entity';
 import { SignUpUserDto } from '../dtos/signup-user.dto';
 import { UserRepositoryPort } from '../ports/user-repository.port';
 import { CryptoRepositoryPort } from '../ports/crypto-repository.port';
 import { SignUpUserUseCase } from './signup-user.use-case';
 import { Email } from '@core/shared/value-objects/email.vo';
 import { UserEmailAlreadyExistsException } from '@core/shared/exceptions/user-email-exists.exception';
+import { User } from '@core/domain/entities/user.entity';
 
 describe('SignUpUserUseCase', () => {
   let useCase: SignUpUserUseCase;
