@@ -1,98 +1,115 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🧩 Task Management — Clean Architecture (POC)
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This project is a **Proof of Concept (POC)** that demonstrates how to build a **framework-independent**, **cleanly-architected** backend application using **Domain-Driven Design (DDD)** and **Clean Architecture principles** — integrated with **NestJS** as the framework layer.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## 🎯 Project Goal
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+The main goal is to create a **scalable, testable, and framework-independent architecture** where the **core business logic** does not depend on any external frameworks, databases, or UI.  
+This approach allows the project to easily switch frameworks (e.g., Express, Fastify) or databases (e.g., PostgreSQL, MongoDB) with minimal impact on the business logic.
 
-## Project setup
+---
 
-```bash
-$ pnpm install
+## 🏗️ Architecture Overview
+
+### Layers
 ```
+core/
+┣ domain/ # Entities, value objects, domain rules
+┣ application/ # Use cases (business logic)
+┗ shared/ # Shared types and utilities
 
-## Compile and run the project
+src/
+┣ infrastuctures/ # (Implementations of adapters and drivers)
+┗ persistence/ # (Planned) Database implementation (PostgreSQL)
 
-```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+main.ts # Entry point
 ```
+---
 
-## Run tests
+### Key Principles
 
-```bash
-# unit tests
-$ pnpm run test
+- **Dependency Inversion** – Core logic does not depend on external frameworks.  
+- **Separation of Concerns** – Each layer has a single responsibility.  
+- **Testability** – Business logic can be tested without framework or database.  
+- **Extensibility** – New frameworks or databases can be integrated easily.
 
-# e2e tests
-$ pnpm run test:e2e
+---
 
-# test coverage
-$ pnpm run test:cov
+## 🚀 Current Roadmap
+
+| Status | Feature | Description |
+|:-------|:---------|:-------------|
+| ✅ | **Core Business Logic** | Implemented domain and use cases for task management |
+| ✅ | **NestJS Integration** | Connected the clean architecture core to NestJS |
+| ⬜ | **PostgreSQL Database** | Add persistence layer using TypeORM or Prisma |
+| ⬜ | **API Documentation** | Generate OpenAPI (Swagger) docs |
+| ⬜ | **Containerization** | Dockerize the project for deployment |
+
+---
+
+## 🧠 Core Concept Example
+
+**Example: Task Use Case**
+
+```ts
+// core/application/use-cases/update-task.usecase.ts
+export class UpdateTaskUseCase {
+  constructor(private readonly taskRepository: TaskRepository) {}
+
+  async execute(input: UpdateTaskInput): Promise<Task> {
+    const task = await this.taskRepository.findById(input.id);
+    task.updateDetails(input.title, input.description);
+    return this.taskRepository.save(task);
+  }
+}
 ```
+This use case doesn’t know anything about NestJS, HTTP, or databases — only pure business logic.
 
-## Deployment
+🧩 Technology Stack
+Language: TypeScript
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Framework: NestJS
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Architecture: Clean Architecture / DDD
 
+Testing: Jest
+
+(Planned): PostgreSQL, Docker, Swagger
+
+🏃 Getting Started
+1. Clone the Repository
 ```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
+git clone https://github.com/Tum-404/task-management-clean-architecture-nestjs.git
+cd task-management-clean-architecture-nestjs
 ```
+2. Install Dependencies
+```bash
+npm install
+```
+3. Run the Project
+```bash
+npm run start:dev
+```
+4. Run Tests
+```bash
+npm run test
+```
+🧭 Future Vision
+The end goal of this project is to provide a reusable architecture template for developers who want to:
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Build framework-independent business logic
 
-## Resources
+Apply DDD + Clean Architecture principles
 
-Check out a few resources that may come in handy when working with NestJS:
+Scale their project safely with clear boundaries
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+🧑‍💻 Author
+Teeradach “Tum” Prichasongsaenglap
+Software Developer — passionate about architecture, clean code, and building scalable systems.
 
-## Support
+🌐 GitHub Profile
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+📄 License
+MIT License — feel free to use this as a base for your own clean architecture experiments.
